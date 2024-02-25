@@ -8,6 +8,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using WorkoutTracker.Models;
+using SQLite;
+using Constants = WorkoutTracker.Constants;
+using WorkoutTracker.Data;
 
 namespace WorkoutTracker.ViewModels
 {
@@ -15,6 +18,7 @@ namespace WorkoutTracker.ViewModels
     {
         #region Fields
 
+        private readonly WorkoutDatabase _workoutDatabase;
         private int _numberOfExercises;
 
         #endregion Fields
@@ -23,8 +27,8 @@ namespace WorkoutTracker.ViewModels
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        private ObservableCollection<Exercise> _exercises;
-        public ObservableCollection<Exercise> Exercises
+        private ObservableCollection<ObservableExercise> _exercises;
+        public ObservableCollection<ObservableExercise> Exercises
         {
             get { return _exercises; }
             set
@@ -74,19 +78,20 @@ namespace WorkoutTracker.ViewModels
         #region Commands
 
         public ICommand AddExerciseCommand => new Command(AddExercise);
-        public ICommand EditExerciseCommand => new Command<Exercise>(EditExercise);
-        public ICommand DeleteExerciseCommand => new Command<Exercise>(DeleteExercise);
-        public ICommand SaveExerciseCommand => new Command<Exercise>(SaveExercise);
+        public ICommand EditExerciseCommand => new Command<ObservableExercise>(EditExercise);
+        public ICommand DeleteExerciseCommand => new Command<ObservableExercise>(DeleteExercise);
+        public ICommand SaveExerciseCommand => new Command<ObservableExercise>(SaveExercise);
 
         #endregion Commands
 
         #region ctor
 
-        public WorkoutTrackerViewModel()
+        public WorkoutTrackerViewModel(WorkoutDatabase workoutDatabase)
         {
+            _workoutDatabase = workoutDatabase;
             _numberOfExercises = 0;
 
-            Exercises = new ObservableCollection<Exercise>() {
+            Exercises = new ObservableCollection<ObservableExercise>() {
                 CreateNewExercise(),
                 CreateNewExercise()
             };
@@ -96,9 +101,9 @@ namespace WorkoutTracker.ViewModels
 
         #region Methods
 
-        public Exercise CreateNewExercise() // For testing
+        public ObservableExercise CreateNewExercise() // For testing
         {
-            var exercise = new Exercise() { ExerciseId = _numberOfExercises, Name = "Pullups", NumberOfSets = 4, NumberOfReps = 5, Weight = 0, IsEditEnabled = false };
+            var exercise = new ObservableExercise() { ExerciseId = _numberOfExercises, Name = "Pullups", NumberOfSets = 4, NumberOfReps = 5, Weight = 0, IsEditEnabled = false };
             _numberOfExercises++;
 
             return exercise;
@@ -108,7 +113,7 @@ namespace WorkoutTracker.ViewModels
         {
             //TODO: check for empty exercise name, NumberOfSets and NumberOfReps
             _numberOfExercises++;
-            Exercises.Add(new Exercise() {
+            Exercises.Add(new ObservableExercise() {
                 ExerciseId = _numberOfExercises, 
                 Name = ExerciseName, 
                 NumberOfSets = NumberOfSets, 
@@ -120,19 +125,28 @@ namespace WorkoutTracker.ViewModels
             ClearEntries();
         }
 
-        public void EditExercise(Exercise currentExercise)
+        public void EditExercise(ObservableExercise currentExercise)
         {
             currentExercise.IsEditEnabled = true;
             currentExercise.IsSaveVisible = true;
         }
 
-        public void DeleteExercise(Exercise currentExercise)
+        public void DeleteExercise(ObservableExercise currentExercise)
         {
             Exercises.Remove(currentExercise);
         }
 
-        public void SaveExercise(Exercise currentExercise)
+        public void SaveExercise(ObservableExercise currentExercise)
         {
+            var tempExercise = new Exercise() {
+                ExerciseId = currentExercise.ExerciseId,
+                Name = currentExercise.Name,
+                NumberOfSets = currentExercise.NumberOfSets,
+                NumberOfReps = currentExercise.NumberOfReps
+            };
+
+            _workoutDatabase.SaveItemAsync(tempExercise);
+
             currentExercise.IsEditEnabled = false;
             currentExercise.IsSaveVisible = false;
         }

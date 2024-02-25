@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using WorkoutTracker.Data;
 using WorkoutTracker.ViewModels;
 
 namespace WorkoutTracker
@@ -17,6 +18,7 @@ namespace WorkoutTracker
                 });
 
             builder.Services.AddSingleton<MainPage>();
+            builder.Services.AddSingleton<WorkoutDatabase>();
             builder.Services.AddSingleton<WorkoutTrackerViewModel>();
 #if DEBUG
     		builder.Logging.AddDebug();

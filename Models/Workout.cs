@@ -10,6 +10,6 @@ namespace WorkoutTracker.Models
     public class Workout
     {
         public string Name{ get; set; }
-        public ObservableCollection<Exercise> Exercises { get; set; }
+        public ObservableCollection<ObservableExercise> Exercises { get; set; }
     }
 }

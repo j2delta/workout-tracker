@@ -4,10 +4,6 @@
              xmlns:local="clr-namespace:WorkoutTracker.ViewModels"
              xmlns:converter="clr-namespace:WorkoutTracker.Converters"
              x:Class="WorkoutTracker.MainPage">
-    <ContentPage.BindingContext>
-        <local:WorkoutTrackerViewModel />
-    </ContentPage.BindingContext>
-
     <ContentPage.Resources>
         <converter:InverseBoolConverter x:Key="InverseBoolConverter"/>
     </ContentPage.Resources>
