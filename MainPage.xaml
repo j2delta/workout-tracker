@@ -1,0 +1,109 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:WorkoutTracker.ViewModels"
+             xmlns:converter="clr-namespace:WorkoutTracker.Converters"
+             x:Class="WorkoutTracker.MainPage">
+    <ContentPage.BindingContext>
+        <local:WorkoutTrackerViewModel />
+    </ContentPage.BindingContext>
+
+    <ContentPage.Resources>
+        <converter:InverseBoolConverter x:Key="InverseBoolConverter"/>
+    </ContentPage.Resources>
+
+    <ScrollView>
+
+        <VerticalStackLayout>
+            <HorizontalStackLayout>
+                <Entry x:Name="exerciseNameEntry" MaxLength="30" SelectionLength="30" Placeholder="Enter exercise name" Text="{Binding ExerciseName, Mode=TwoWay}"/>
+                <Entry x:Name="numberOfSetsEntry" SelectionLength="3"  Placeholder="Enter number of sets" Text="{Binding NumberOfSets, Mode=TwoWay}"/>
+                <Entry x:Name="numberOfRepsEntry" SelectionLength="3"  Placeholder="Enter number of reps" Text="{Binding NumberOfReps, Mode=TwoWay}"/>
+                <Entry x:Name="weightEntry" SelectionLength="3" Placeholder="Enter weight" Text="{Binding Weight, Mode=TwoWay}"/>
+            </HorizontalStackLayout>
+            
+            <Button
+                x:Name="AddExercise"
+                Text="Add Exercise" 
+                SemanticProperties.Hint="Adds an exercise to the workout"
+                Command="{Binding AddExerciseCommand}"
+                HorizontalOptions="Fill" />
+
+            <CollectionView ItemsSource="{Binding Exercises}">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="auto"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto"/>
+                                <ColumnDefinition Width="auto"/>
+                                <ColumnDefinition Width="auto"/>
+                                <ColumnDefinition Width="auto"/>
+                                <ColumnDefinition Width="auto"/>
+                                <ColumnDefinition Width="auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Entry 
+                                Grid.Row="0"
+                                Grid.Column="0"
+                                MaxLength="30" 
+                                SelectionLength="30" 
+                                Placeholder="Enter exercise name" 
+                                Text="{Binding Name, Mode=TwoWay}" 
+                                IsEnabled="{Binding IsEditEnabled}"/>
+                            
+                            <Entry 
+                                Grid.Row="0"
+                                Grid.Column="1"
+                                SelectionLength="3"  
+                                Placeholder="Enter number of sets" 
+                                Text="{Binding NumberOfSets, Mode=TwoWay}" 
+                                IsEnabled="{Binding IsEditEnabled}"/>
+                            
+                            <Entry 
+                                Grid.Row="0"
+                                Grid.Column="2"
+                                SelectionLength="3"  
+                                Placeholder="Enter number of reps" 
+                                Text="{Binding NumberOfReps, Mode=TwoWay}" 
+                                IsEnabled="{Binding IsEditEnabled}"/>
+
+                            <Entry 
+                                Grid.Row="0"
+                                Grid.Column="3"
+                                SelectionLength="3" 
+                                Placeholder="Enter weight" 
+                                Text="{Binding Weight, Mode=TwoWay}" 
+                                IsEnabled="{Binding IsEditEnabled}"/>
+
+                            <Button 
+                                Grid.Column="4"
+                                Text="Edit"
+                                IsVisible="{Binding IsSaveVisible, Converter={StaticResource InverseBoolConverter}}"
+                                Command="{Binding EditExerciseCommand, Source={RelativeSource AncestorType={x:Type local:WorkoutTrackerViewModel}}}"
+                                CommandParameter="{Binding .}"/>
+
+                            <Button
+                                Grid.Column="4"
+                                Text="Save"
+                                IsVisible="{Binding IsSaveVisible}"
+                                Command="{Binding SaveExerciseCommand, Source={RelativeSource AncestorType={x:Type local:WorkoutTrackerViewModel}}}"
+                                CommandParameter="{Binding .}"/>
+                            
+                            <Button 
+                                Grid.Column="5"
+                                Text="Delete"
+                                Command="{Binding DeleteExerciseCommand, Source={RelativeSource AncestorType={x:Type local:WorkoutTrackerViewModel}}}"
+                                CommandParameter="{Binding .}"/>
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+        </VerticalStackLayout>
+        
+    </ScrollView>
+    
+</ContentPage>
