@@ -1,10 +1,15 @@
-﻿namespace WorkoutTracker
+﻿using WorkoutTracker.ViewModels;
+
+namespace WorkoutTracker
 {
     public partial class AppShell : Shell
     {
         public AppShell()
         {
             InitializeComponent();
+
+            Routing.RegisterRoute(nameof(WorkoutsPageView), typeof(WorkoutsPageView));
+            Routing.RegisterRoute(nameof(MainPage), typeof(MainPage));
         }
     }
 }

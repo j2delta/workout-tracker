@@ -7,9 +7,15 @@
     Shell.FlyoutBehavior="Disabled"
     Title="WorkoutTracker">
 
-    <ShellContent
-        Title="Home"
+    <!--<ShellContent
+        Title="Workouts"
         ContentTemplate="{DataTemplate local:MainPage}"
-        Route="MainPage" />
+        Route="MainPage" />-->
+
+    <ShellContent
+    Title="Workouts"
+    ContentTemplate="{DataTemplate local:WorkoutsPageView}"
+    Route="WorkoutsPageView" />
+
 
 </Shell>

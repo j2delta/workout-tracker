@@ -19,7 +19,6 @@ namespace WorkoutTracker.ViewModels
         #region Fields
 
         private readonly WorkoutDatabase _workoutDatabase;
-        private int _numberOfExercises;
 
         #endregion Fields
 
@@ -27,8 +26,8 @@ namespace WorkoutTracker.ViewModels
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        private ObservableCollection<ObservableExercise> _exercises;
-        public ObservableCollection<ObservableExercise> Exercises
+        private ObservableCollection<Exercise> _exercises;
+        public ObservableCollection<Exercise> Exercises
         {
             get { return _exercises; }
             set
@@ -66,21 +65,14 @@ namespace WorkoutTracker.ViewModels
             set { _weight = value; NotifyPropertyChanged(nameof(Weight)); }
         }
 
-        //private bool _isEditEnabled;
-        //public bool IsEditEnabled
-        //{
-        //    get { return _isEditEnabled; }
-        //    set { _isEditEnabled = value; NotifyPropertyChanged(nameof(IsEditEnabled)); }
-        //}
-
         #endregion Properties
 
         #region Commands
 
         public ICommand AddExerciseCommand => new Command(AddExercise);
-        public ICommand EditExerciseCommand => new Command<ObservableExercise>(EditExercise);
-        public ICommand DeleteExerciseCommand => new Command<ObservableExercise>(DeleteExercise);
-        public ICommand SaveExerciseCommand => new Command<ObservableExercise>(SaveExercise);
+        public ICommand EditExerciseCommand => new Command<Exercise>(EditExercise);
+        public ICommand DeleteExerciseCommand => new Command<Exercise>(DeleteExercise);
+        public ICommand SaveExerciseCommand => new Command<Exercise>(SaveExercise);
 
         #endregion Commands
 
@@ -89,63 +81,74 @@ namespace WorkoutTracker.ViewModels
         public WorkoutTrackerViewModel(WorkoutDatabase workoutDatabase)
         {
             _workoutDatabase = workoutDatabase;
-            _numberOfExercises = 0;
 
-            Exercises = new ObservableCollection<ObservableExercise>() {
-                CreateNewExercise(),
-                CreateNewExercise()
-            };
+            //Exercises = new ObservableCollection<Exercise>() {
+            //    CreateNewExercise(),
+            //    CreateNewExercise()
+            //};
+
+            Task.Run(LoadExercisesAsync);
         }
 
         #endregion ctor
 
         #region Methods
 
-        public ObservableExercise CreateNewExercise() // For testing
+        public async Task LoadExercisesAsync()
         {
-            var exercise = new ObservableExercise() { ExerciseId = _numberOfExercises, Name = "Pullups", NumberOfSets = 4, NumberOfReps = 5, Weight = 0, IsEditEnabled = false };
-            _numberOfExercises++;
+            //Implement IsBusyLoading functionality
+            //Maybe use this https://stackoverflow.com/questions/75327214/initialize-async-data-in-viewmodel-net-maui
+            //And this https://learn.microsoft.com/en-us/archive/msdn-magazine/2014/april/async-programming-patterns-for-asynchronous-mvvm-applications-commands
+            var exerciseList = await _workoutDatabase.GetItemsAsync().ConfigureAwait(false);
 
-            return exercise;
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                Exercises = new ObservableCollection<Exercise>(exerciseList);
+            });
         }
 
         public void AddExercise()
         {
             //TODO: check for empty exercise name, NumberOfSets and NumberOfReps
-            _numberOfExercises++;
-            Exercises.Add(new ObservableExercise() {
-                ExerciseId = _numberOfExercises, 
-                Name = ExerciseName, 
-                NumberOfSets = NumberOfSets, 
-                NumberOfReps = NumberOfReps, 
-                Weight = Weight, 
+
+            var exerciseToAdd = new Exercise()
+            {
+                Name = ExerciseName,
+                NumberOfSets = NumberOfSets,
+                NumberOfReps = NumberOfReps,
+                Weight = Weight,
                 IsEditEnabled = false,
-                IsSaveVisible = false});
+                IsSaveVisible = false
+            };
 
             ClearEntries();
+            _workoutDatabase.SaveItemAsync(exerciseToAdd).GetAwaiter().GetResult();
+            LoadExercisesAsync().GetAwaiter().GetResult();
         }
 
-        public void EditExercise(ObservableExercise currentExercise)
+        public void EditExercise(Exercise currentExercise)
         {
             currentExercise.IsEditEnabled = true;
             currentExercise.IsSaveVisible = true;
         }
 
-        public void DeleteExercise(ObservableExercise currentExercise)
+        public void DeleteExercise(Exercise currentExercise)
         {
-            Exercises.Remove(currentExercise);
+            _workoutDatabase.DeleteItemAsync(currentExercise).GetAwaiter().GetResult();
+            LoadExercisesAsync().GetAwaiter().GetResult();
         }
 
-        public void SaveExercise(ObservableExercise currentExercise)
+        public void SaveExercise(Exercise currentExercise)
         {
             var tempExercise = new Exercise() {
                 ExerciseId = currentExercise.ExerciseId,
                 Name = currentExercise.Name,
                 NumberOfSets = currentExercise.NumberOfSets,
-                NumberOfReps = currentExercise.NumberOfReps
+                NumberOfReps = currentExercise.NumberOfReps,
+                Weight= currentExercise.Weight
             };
 
-            _workoutDatabase.SaveItemAsync(tempExercise);
+            _workoutDatabase.SaveItemAsync(tempExercise).GetAwaiter().GetResult();
 
             currentExercise.IsEditEnabled = false;
             currentExercise.IsSaveVisible = false;

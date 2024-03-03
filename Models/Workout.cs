@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SQLite;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -9,7 +10,8 @@ namespace WorkoutTracker.Models
 {
     public class Workout
     {
+        [PrimaryKey, AutoIncrement]
+        public int WorkoutId { get; set; }
         public string Name{ get; set; }
-        public ObservableCollection<ObservableExercise> Exercises { get; set; }
     }
 }
