@@ -4,66 +4,61 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Input;
 using WorkoutTracker.Commands;
 using WorkoutTracker.Data;
+using WorkoutTracker.Models;
 
 namespace WorkoutTracker.ViewModels
 {
-    public class WorkoutsPageViewModel : INotifyPropertyChanged
+    public class NewWorkoutPageViewModel : INotifyPropertyChanged
     {
         #region Fields
-
         private readonly WorkoutDatabase _workoutDatabase;
-
         #endregion Fields
 
-        #region Properies
+        #region Properties
+        private string _workoutName;
 
-        public event PropertyChangedEventHandler? PropertyChanged;
+        public string WorkoutName
+        {
+            get { return _workoutName; }
+            set { _workoutName = value; NotifyPropertyChanged(nameof(WorkoutName)); }
+        }
 
         #endregion Properties
 
         #region Commands
-
-        public AsyncRelayCommand GoToExercisesCommand => new AsyncRelayCommand(HandleException, GoToExercisesPage);
-
-        public AsyncRelayCommand GoToNewWorkoutCommand => new AsyncRelayCommand(HandleException, GoToNewWorkoutPage);
-
+        public AsyncRelayCommand SaveWorkoutCommand => new AsyncRelayCommand(HandleException, SaveWorkout);
         #endregion Commands
 
-        #region ctor
+        public event PropertyChangedEventHandler? PropertyChanged;
 
-        public WorkoutsPageViewModel(WorkoutDatabase workoutDatabase)
+        public NewWorkoutPageViewModel(WorkoutDatabase workoutDatabase)
         {
             _workoutDatabase = workoutDatabase;
         }
 
-        #endregion ctor
-
-
         #region Methods
-
         public void NotifyPropertyChanged(string name)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
 
-        public async Task GoToExercisesPage()
+        public async Task SaveWorkout()
         {
-            await Shell.Current.GoToAsync(nameof(ExercisesPageView));
-        }
+            var workout = new Workout()
+            {
+                Name = WorkoutName
+            };
 
-        public async Task GoToNewWorkoutPage()
-        {
-            await Shell.Current.GoToAsync(nameof(NewWorkoutPageView));
+            await _workoutDatabase.SaveWorkoutAsync(workout);
+            await Shell.Current.GoToAsync("..");
         }
 
         public void HandleException(Exception ex)
         {
             Console.WriteLine(ex);
         }
-
         #endregion Methods
     }
 }

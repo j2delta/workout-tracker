@@ -14,7 +14,7 @@ using WorkoutTracker.Data;
 
 namespace WorkoutTracker.ViewModels
 {
-    public class WorkoutTrackerViewModel : INotifyPropertyChanged
+    public class ExercisesPageViewModel : INotifyPropertyChanged
     {
         #region Fields
 
@@ -78,7 +78,7 @@ namespace WorkoutTracker.ViewModels
 
         #region ctor
 
-        public WorkoutTrackerViewModel(WorkoutDatabase workoutDatabase)
+        public ExercisesPageViewModel(WorkoutDatabase workoutDatabase)
         {
             _workoutDatabase = workoutDatabase;
 

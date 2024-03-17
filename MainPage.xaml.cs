@@ -1,4 +1,4 @@
-﻿using WorkoutTracker.ViewModels;
+using WorkoutTracker.ViewModels;
 
 namespace WorkoutTracker
 {

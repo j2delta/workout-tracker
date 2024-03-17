@@ -38,11 +38,27 @@ namespace WorkoutTracker.Data
             return await Database.Table<Exercise>().Where(i => i.ExerciseId == id).FirstOrDefaultAsync().ConfigureAwait(false); ;
         }
 
-        public async Task<int> SaveItemAsync(Exercise item)
+        public async Task<int> SaveExerciseAsync(Exercise item)
         {
             await Init();
 
             var existingRecord = await GetItemAsync(item.ExerciseId).ConfigureAwait(false);
+
+            if (existingRecord != null)
+            {
+                return await Database.UpdateAsync(item).ConfigureAwait(false); ;
+            }
+            else
+            {
+                return await Database.InsertAsync(item).ConfigureAwait(false); ;
+            }
+        }
+
+        public async Task<int> SaveWorkoutAsync(Workout item)
+        {
+            await Init();
+
+            var existingRecord = await GetItemAsync(item.WorkoutId).ConfigureAwait(false);
 
             if (existingRecord != null)
             {

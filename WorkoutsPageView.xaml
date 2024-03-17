@@ -11,5 +11,10 @@
                 SemanticProperties.Hint="Go to Exercises page"
                 Command="{Binding GoToExercisesCommand, Source={RelativeSource AncestorType={x:Type local:WorkoutsPageViewModel}}}"
                 HorizontalOptions="Fill" />
+        <Button 
+            x:Name="NavigateToNewWorkout"
+            Text="New Workout"
+            Command="{Binding GoToNewWorkoutCommand, Source={RelativeSource AncestorType={x:Type local:WorkoutsPageViewModel}}}"
+            />
     </VerticalStackLayout>
 </ContentPage>

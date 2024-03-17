@@ -9,7 +9,8 @@ namespace WorkoutTracker
             InitializeComponent();
 
             Routing.RegisterRoute(nameof(WorkoutsPageView), typeof(WorkoutsPageView));
-            Routing.RegisterRoute(nameof(MainPage), typeof(MainPage));
+            Routing.RegisterRoute(nameof(ExercisesPageView), typeof(ExercisesPageView));
+            Routing.RegisterRoute(nameof(NewWorkoutPageView), typeof(NewWorkoutPageView));
         }
     }
 }

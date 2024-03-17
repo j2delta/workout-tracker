@@ -23,10 +23,17 @@ namespace WorkoutTracker
             builder.Services.AddSingleton<MainPage>();
             builder.Services.AddSingleton<WorkoutTrackerViewModel>();
 
+            builder.Services.AddTransient<ExercisesPageView>();
+            builder.Services.AddTransient<ExercisesPageViewModel>();
+
             builder.Services.AddTransient<WorkoutsPageView>();
             builder.Services.AddTransient<WorkoutsPageViewModel>();
+
+            builder.Services.AddTransient<NewWorkoutPageView>();
+            builder.Services.AddTransient<NewWorkoutPageViewModel>();
+
 #if DEBUG
-    		builder.Logging.AddDebug();
+            builder.Logging.AddDebug();
 #endif
 
             return builder.Build();
