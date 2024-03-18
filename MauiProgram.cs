@@ -26,6 +26,9 @@ namespace WorkoutTracker
             builder.Services.AddTransient<ExercisesPageView>();
             builder.Services.AddTransient<ExercisesPageViewModel>();
 
+            builder.Services.AddTransient<EditExercisesPageView>();
+            builder.Services.AddTransient<EditExercisesPageViewModel>();
+
             builder.Services.AddTransient<WorkoutsPageView>();
             builder.Services.AddTransient<WorkoutsPageViewModel>();
 

@@ -27,5 +27,9 @@
     ContentTemplate="{DataTemplate local:NewWorkoutPageView}"
     Route="NewWorkoutPageView" />
 
+    <ShellContent
+    Title="Edit Exercises"
+    ContentTemplate="{DataTemplate local:EditExercisesPageView}"
+    Route="EditExercisesPageView" />
 
 </Shell>

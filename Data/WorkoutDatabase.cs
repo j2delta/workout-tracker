@@ -26,10 +26,16 @@ namespace WorkoutTracker.Data
             await Database.CreateTableAsync<WorkoutExerciseLink>().ConfigureAwait(false);
         }
 
-        public async Task<List<Exercise>> GetItemsAsync()
+        public async Task<List<Exercise>> GetExercisesAsync()
         {
             await Init();
             return await Database.Table<Exercise>().ToListAsync().ConfigureAwait(false); ;
+        }
+
+        public async Task<List<Workout>> GetWorkoutsAsync()
+        {
+            await Init();
+            return await Database.Table<Workout>().ToListAsync().ConfigureAwait(false); ;
         }
 
         public async Task<Exercise> GetItemAsync(int id)

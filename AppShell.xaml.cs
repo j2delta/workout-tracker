@@ -11,6 +11,7 @@ namespace WorkoutTracker
             Routing.RegisterRoute(nameof(WorkoutsPageView), typeof(WorkoutsPageView));
             Routing.RegisterRoute(nameof(ExercisesPageView), typeof(ExercisesPageView));
             Routing.RegisterRoute(nameof(NewWorkoutPageView), typeof(NewWorkoutPageView));
+            Routing.RegisterRoute(nameof(EditExercisesPageView), typeof(EditExercisesPageView));
         }
     }
 }

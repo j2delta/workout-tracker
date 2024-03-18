@@ -14,6 +14,7 @@ using WorkoutTracker.Data;
 
 namespace WorkoutTracker.ViewModels
 {
+    [QueryProperty(nameof(SelectedWorkoutId), "WorkoutId")]
     public class ExercisesPageViewModel : INotifyPropertyChanged
     {
         #region Fields
@@ -65,6 +66,14 @@ namespace WorkoutTracker.ViewModels
             set { _weight = value; NotifyPropertyChanged(nameof(Weight)); }
         }
 
+        private string _selectedWorkoutId;
+        public string SelectedWorkoutId
+        {
+            get { return _selectedWorkoutId; }
+            set { _selectedWorkoutId = value; }
+        }
+
+
         #endregion Properties
 
         #region Commands
@@ -99,7 +108,7 @@ namespace WorkoutTracker.ViewModels
             //Implement IsBusyLoading functionality
             //Maybe use this https://stackoverflow.com/questions/75327214/initialize-async-data-in-viewmodel-net-maui
             //And this https://learn.microsoft.com/en-us/archive/msdn-magazine/2014/april/async-programming-patterns-for-asynchronous-mvvm-applications-commands
-            var exerciseList = await _workoutDatabase.GetItemsAsync().ConfigureAwait(false);
+            var exerciseList = await _workoutDatabase.GetExercisesAsync().ConfigureAwait(false);
 
             MainThread.BeginInvokeOnMainThread(() =>
             {

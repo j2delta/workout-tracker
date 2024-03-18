@@ -71,6 +71,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <MauiXaml Update="EditExercisesPageView.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="WorkoutsPageView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
