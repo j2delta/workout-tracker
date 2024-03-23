@@ -4,6 +4,7 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:WorkoutTracker"
+    xmlns:views="clr-namespace:WorkoutTracker.Views"
     Shell.FlyoutBehavior="Disabled"
     Title="WorkoutTracker">
 
@@ -18,11 +19,6 @@
     Route="WorkoutsPageView" />
 
     <ShellContent
-    Title="Exercises"
-    ContentTemplate="{DataTemplate local:ExercisesPageView}"
-    Route="ExercisesPageView" />
-
-    <ShellContent
     Title="New Workout"
     ContentTemplate="{DataTemplate local:NewWorkoutPageView}"
     Route="NewWorkoutPageView" />
@@ -31,5 +27,10 @@
     Title="Edit Exercises"
     ContentTemplate="{DataTemplate local:EditExercisesPageView}"
     Route="EditExercisesPageView" />
+
+    <ShellContent
+    Title="Do Workout"
+    ContentTemplate="{DataTemplate views:DoWorkoutPageView}"
+    Route="DoWorkoutPageView" />
 
 </Shell>

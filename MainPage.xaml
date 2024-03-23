@@ -74,7 +74,7 @@
                                 Text="{Binding Weight, Mode=TwoWay}" 
                                 IsEnabled="{Binding IsEditEnabled}"/>
 
-                            <Button 
+                            <!--<Button 
                                 Grid.Column="4"
                                 Text="Edit"
                                 IsVisible="{Binding IsSaveVisible, Converter={StaticResource InverseBoolConverter}}"
@@ -92,7 +92,7 @@
                                 Grid.Column="5"
                                 Text="Delete"
                                 Command="{Binding DeleteExerciseCommand, Source={RelativeSource AncestorType={x:Type local:WorkoutTrackerViewModel}}}"
-                                CommandParameter="{Binding .}"/>
+                                CommandParameter="{Binding .}"/>-->
                         </Grid>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>

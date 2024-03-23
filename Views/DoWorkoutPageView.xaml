@@ -1,10 +1,10 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="WorkoutTracker.Views.DoWorkoutPageView"
              xmlns:local="clr-namespace:WorkoutTracker.ViewModels"
              xmlns:converter="clr-namespace:WorkoutTracker.Converters"
-             x:Class="WorkoutTracker.ExercisesPageView"
-             Title="Exercises">
+             Title="Do Workout">
     <ContentPage.Resources>
         <converter:InverseBoolConverter x:Key="InverseBoolConverter"/>
     </ContentPage.Resources>
@@ -18,12 +18,12 @@
                 <Entry x:Name="numberOfRepsEntry" SelectionLength="3"  Placeholder="Enter number of reps" Text="{Binding NumberOfReps, Mode=TwoWay}"/>
                 <Entry x:Name="weightEntry" SelectionLength="3" Placeholder="Enter weight" Text="{Binding Weight, Mode=TwoWay}"/>
             </HorizontalStackLayout>
-            
+
             <Button
                 x:Name="AddExercise"
                 Text="Add Exercise" 
                 SemanticProperties.Hint="Adds an exercise to the workout"
-                Command="{Binding AddExerciseCommand}"
+                Command="{Binding AddExerciseCommand, Source={RelativeSource AncestorType={x:Type local:DoWorkoutPageViewModel}}}"
                 HorizontalOptions="Fill" />
 
             <CollectionView ItemsSource="{Binding Exercises}">
@@ -50,7 +50,7 @@
                                 Placeholder="Enter exercise name" 
                                 Text="{Binding Name, Mode=TwoWay}" 
                                 IsEnabled="{Binding IsEditEnabled}"/>
-                            
+
                             <Entry 
                                 Grid.Row="0"
                                 Grid.Column="1"
@@ -58,7 +58,7 @@
                                 Placeholder="Enter number of sets" 
                                 Text="{Binding NumberOfSets, Mode=TwoWay}" 
                                 IsEnabled="{Binding IsEditEnabled}"/>
-                            
+
                             <Entry 
                                 Grid.Row="0"
                                 Grid.Column="2"
@@ -79,28 +79,31 @@
                                 Grid.Column="4"
                                 Text="Edit"
                                 IsVisible="{Binding IsSaveVisible, Converter={StaticResource InverseBoolConverter}}"
-                                Command="{Binding EditExerciseCommand, Source={RelativeSource AncestorType={x:Type local:ExercisesPageViewModel}}}"
+                                Command="{Binding EditExerciseCommand, Source={RelativeSource AncestorType={x:Type local:DoWorkoutPageViewModel}}}"
                                 CommandParameter="{Binding .}"/>
 
                             <Button
                                 Grid.Column="4"
                                 Text="Save"
                                 IsVisible="{Binding IsSaveVisible}"
-                                Command="{Binding SaveExerciseCommand, Source={RelativeSource AncestorType={x:Type local:ExercisesPageViewModel}}}"
+                                Command="{Binding SaveExerciseCommand, Source={RelativeSource AncestorType={x:Type local:DoWorkoutPageViewModel}}}"
                                 CommandParameter="{Binding .}"/>
-                            
+
                             <Button 
                                 Grid.Column="5"
                                 Text="Delete"
-                                Command="{Binding DeleteExerciseCommand, Source={RelativeSource AncestorType={x:Type local:ExercisesPageViewModel}}}"
+                                Command="{Binding DeleteExerciseCommand, Source={RelativeSource AncestorType={x:Type local:DoWorkoutPageViewModel}}}"
                                 CommandParameter="{Binding .}"/>
                         </Grid>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
             </CollectionView>
 
+            <Button 
+                Text="Complete Workout"
+                Command="{Binding CompleteWorkoutCommand, Source={RelativeSource AncestorType={x:Type local:DoWorkoutPageViewModel}}}"/>
+
         </VerticalStackLayout>
-        
+
     </ScrollView>
-    
 </ContentPage>

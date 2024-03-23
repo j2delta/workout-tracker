@@ -65,13 +65,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Compile Update="ExercisesPageView.xaml.cs">
-	    <DependentUpon>ExercisesPageView.xaml</DependentUpon>
-	  </Compile>
-	</ItemGroup>
-
-	<ItemGroup>
 	  <MauiXaml Update="EditExercisesPageView.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\DoWorkoutPageView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="WorkoutsPageView.xaml">

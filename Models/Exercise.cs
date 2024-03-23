@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,6 +13,9 @@ namespace WorkoutTracker.Models
     {
         [PrimaryKey, AutoIncrement]
         public int ExerciseId { get; set; }
+
+        [ForeignKey(nameof(WorkoutId))]
+        public int WorkoutId { get; set; }
 
         private string _name;
         public string Name
@@ -33,7 +37,6 @@ namespace WorkoutTracker.Models
             get { return _numberOfReps; }
             set { _numberOfReps = value; NotifyPropertyChanged(nameof(NumberOfReps)); }
         }
-
 
         private int _weight;
         public int Weight

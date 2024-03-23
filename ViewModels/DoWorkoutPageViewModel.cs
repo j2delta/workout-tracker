@@ -1,5 +1,4 @@
-﻿//using Android.Health.Connect.DataTypes;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -7,15 +6,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using WorkoutTracker.Models;
-using SQLite;
-using Constants = WorkoutTracker.Constants;
+using WorkoutTracker.Commands;
 using WorkoutTracker.Data;
+using WorkoutTracker.Models;
 
 namespace WorkoutTracker.ViewModels
 {
     [QueryProperty(nameof(SelectedWorkoutId), "WorkoutId")]
-    public class ExercisesPageViewModel : INotifyPropertyChanged
+    public class DoWorkoutPageViewModel : INotifyPropertyChanged
     {
         #region Fields
 
@@ -23,9 +21,18 @@ namespace WorkoutTracker.ViewModels
 
         #endregion Fields
 
-        #region Properties
+        #region Properies
 
-        public event PropertyChangedEventHandler? PropertyChanged;
+        private int _selectedWorkoutId;
+        public int SelectedWorkoutId
+        {
+            get { return _selectedWorkoutId; }
+            set
+            {
+                _selectedWorkoutId = value;
+                Task.Run(LoadExercisesAsync);
+            }
+        }
 
         private ObservableCollection<Exercise> _exercises;
         public ObservableCollection<Exercise> Exercises
@@ -66,49 +73,35 @@ namespace WorkoutTracker.ViewModels
             set { _weight = value; NotifyPropertyChanged(nameof(Weight)); }
         }
 
-        private string _selectedWorkoutId;
-        public string SelectedWorkoutId
-        {
-            get { return _selectedWorkoutId; }
-            set { _selectedWorkoutId = value; }
-        }
-
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         #endregion Properties
 
         #region Commands
 
-        public ICommand AddExerciseCommand => new Command(AddExercise);
+        public AsyncRelayCommand AddExerciseCommand => new AsyncRelayCommand(HandleException, AddExercise);
         public ICommand EditExerciseCommand => new Command<Exercise>(EditExercise);
-        public ICommand DeleteExerciseCommand => new Command<Exercise>(DeleteExercise);
-        public ICommand SaveExerciseCommand => new Command<Exercise>(SaveExercise);
+        public AsyncRelayCommand<Exercise> DeleteExerciseCommand => new AsyncRelayCommand<Exercise>(HandleException, DeleteExercise);
+        public AsyncRelayCommand<Exercise> SaveExerciseCommand => new AsyncRelayCommand<Exercise>(HandleException, SaveExercise);
+        public AsyncRelayCommand CompleteWorkoutCommand => new AsyncRelayCommand(HandleException, CompleteWorkout);
 
         #endregion Commands
 
         #region ctor
 
-        public ExercisesPageViewModel(WorkoutDatabase workoutDatabase)
+        public DoWorkoutPageViewModel(WorkoutDatabase workoutDatabase)
         {
             _workoutDatabase = workoutDatabase;
-
-            //Exercises = new ObservableCollection<Exercise>() {
-            //    CreateNewExercise(),
-            //    CreateNewExercise()
-            //};
-
-            Task.Run(LoadExercisesAsync);
         }
 
         #endregion ctor
+
 
         #region Methods
 
         public async Task LoadExercisesAsync()
         {
-            //Implement IsBusyLoading functionality
-            //Maybe use this https://stackoverflow.com/questions/75327214/initialize-async-data-in-viewmodel-net-maui
-            //And this https://learn.microsoft.com/en-us/archive/msdn-magazine/2014/april/async-programming-patterns-for-asynchronous-mvvm-applications-commands
-            var exerciseList = await _workoutDatabase.GetExercisesAsync().ConfigureAwait(false);
+            var exerciseList = await _workoutDatabase.GetExercisesAsync(SelectedWorkoutId).ConfigureAwait(false);
 
             MainThread.BeginInvokeOnMainThread(() =>
             {
@@ -116,12 +109,13 @@ namespace WorkoutTracker.ViewModels
             });
         }
 
-        public void AddExercise()
+        public async Task AddExercise()
         {
             //TODO: check for empty exercise name, NumberOfSets and NumberOfReps
 
             var exerciseToAdd = new Exercise()
             {
+                WorkoutId = SelectedWorkoutId,
                 Name = ExerciseName,
                 NumberOfSets = NumberOfSets,
                 NumberOfReps = NumberOfReps,
@@ -131,8 +125,8 @@ namespace WorkoutTracker.ViewModels
             };
 
             ClearEntries();
-            _workoutDatabase.SaveExerciseAsync(exerciseToAdd).GetAwaiter().GetResult();
-            LoadExercisesAsync().GetAwaiter().GetResult();
+            await _workoutDatabase.SaveExerciseAsync(exerciseToAdd).ConfigureAwait(false);
+            await LoadExercisesAsync().ConfigureAwait(false);
         }
 
         public void EditExercise(Exercise currentExercise)
@@ -141,23 +135,25 @@ namespace WorkoutTracker.ViewModels
             currentExercise.IsSaveVisible = true;
         }
 
-        public void DeleteExercise(Exercise currentExercise)
+        public async Task DeleteExercise(Exercise currentExercise)
         {
-            _workoutDatabase.DeleteItemAsync(currentExercise).GetAwaiter().GetResult();
-            LoadExercisesAsync().GetAwaiter().GetResult();
+            await _workoutDatabase.DeleteItemAsync(currentExercise).ConfigureAwait(false);
+            await LoadExercisesAsync().ConfigureAwait(false);
         }
 
-        public void SaveExercise(Exercise currentExercise)
+        public async Task SaveExercise(Exercise currentExercise)
         {
-            var tempExercise = new Exercise() {
+            var tempExercise = new Exercise()
+            {
+                WorkoutId = SelectedWorkoutId,
                 ExerciseId = currentExercise.ExerciseId,
                 Name = currentExercise.Name,
                 NumberOfSets = currentExercise.NumberOfSets,
                 NumberOfReps = currentExercise.NumberOfReps,
-                Weight= currentExercise.Weight
+                Weight = currentExercise.Weight
             };
 
-            _workoutDatabase.SaveExerciseAsync(tempExercise).GetAwaiter().GetResult();
+            await _workoutDatabase.SaveExerciseAsync(tempExercise).ConfigureAwait(false);
 
             currentExercise.IsEditEnabled = false;
             currentExercise.IsSaveVisible = false;
@@ -171,9 +167,20 @@ namespace WorkoutTracker.ViewModels
             Weight = 0;
         }
 
+        public async Task CompleteWorkout()
+        {
+            //TODO: Save the exercises to the new history table
+            //TODO: Update workout exercises with most recent data
+        }
+
         public void NotifyPropertyChanged(string name)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        }
+
+        public void HandleException(Exception ex)
+        {
+            Console.WriteLine(ex);
         }
 
         #endregion Methods

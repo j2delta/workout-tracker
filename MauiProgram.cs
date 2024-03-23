@@ -2,6 +2,7 @@
 using WorkoutTracker.Data;
 using WorkoutTracker.ViewModels;
 using WorkoutTracker;
+using WorkoutTracker.Views;
 
 namespace WorkoutTracker
 {
@@ -20,11 +21,7 @@ namespace WorkoutTracker
 
             builder.Services.AddSingleton<WorkoutDatabase>();
 
-            builder.Services.AddSingleton<MainPage>();
-            builder.Services.AddSingleton<WorkoutTrackerViewModel>();
-
-            builder.Services.AddTransient<ExercisesPageView>();
-            builder.Services.AddTransient<ExercisesPageViewModel>();
+            //builder.Services.AddSingleton<MainPage>();
 
             builder.Services.AddTransient<EditExercisesPageView>();
             builder.Services.AddTransient<EditExercisesPageViewModel>();
@@ -34,6 +31,9 @@ namespace WorkoutTracker
 
             builder.Services.AddTransient<NewWorkoutPageView>();
             builder.Services.AddTransient<NewWorkoutPageViewModel>();
+
+            builder.Services.AddTransient<DoWorkoutPageView>();
+            builder.Services.AddTransient<DoWorkoutPageViewModel>();
 
 #if DEBUG
             builder.Logging.AddDebug();

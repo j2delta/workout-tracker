@@ -9,6 +9,7 @@ using System.Windows.Input;
 using WorkoutTracker.Commands;
 using WorkoutTracker.Data;
 using WorkoutTracker.Models;
+using WorkoutTracker.Views;
 
 namespace WorkoutTracker.ViewModels
 {
@@ -50,8 +51,8 @@ namespace WorkoutTracker.ViewModels
         #region Commands
 
         public AsyncRelayCommand GoToEditExercisesCommand => new AsyncRelayCommand(HandleException, GoToEditExercisesPage);
-
         public AsyncRelayCommand GoToNewWorkoutCommand => new AsyncRelayCommand(HandleException, GoToNewWorkoutPage);
+        public AsyncRelayCommand GoToDoWorkoutCommand => new AsyncRelayCommand(HandleException, GoToDoWorkoutPage);
 
         #endregion Commands
 
@@ -92,6 +93,18 @@ namespace WorkoutTracker.ViewModels
         public async Task GoToNewWorkoutPage()
         {
             await Shell.Current.GoToAsync(nameof(NewWorkoutPageView));
+        }
+
+        public async Task GoToDoWorkoutPage()
+        {
+            if (SelectedWorkout == null)
+            {
+                //await DisplayAlert("Alert", "Please select a workout to do", "Cancel");
+                await Application.Current.MainPage.DisplayAlert("Alert", "Please select a workout to do", "Cancel");
+                return;
+            }
+
+            await Shell.Current.GoToAsync($"{nameof(DoWorkoutPageView)}?WorkoutId={SelectedWorkout.WorkoutId}");
         }
 
         public void HandleException(Exception ex)
